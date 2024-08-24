@@ -5,34 +5,46 @@ import { openai } from "../api/OpenAI";
 function useChatAI(chat, setChat) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [response, setResponse] = useState("");
+  const [isTimedOut, setIsTimedOut] = useState(false);
   useEffect(
     function () {
-
-      async function main() {
-        try {
-          setIsGenerating(true);
-          const completion = await openai.chat.completions.create({
-            messages: chat,
-            model: "gpt-3.5-turbo",
-          });
-          ///////// TO DO ///////////////////////
-          //what we can do here is create a response state that holds the most recent
-          //response until another chat is sent then push the response to the chat, clear it, and then push the chat as well
-          //so the ai will be updated by the most recent system responses 
-          setChat(prev => [...prev, completion.choices[0].message]);
-          setIsGenerating(false);
-        } catch (err) {
-          setIsGenerating(false);
-          setError(`Chatbot Error: ${err.message}`);
+      let timeoutId;
+      async function generateCompletion() {
+        // so not too many requests are made in development
+        if (!isTimedOut && chat.length) {
+          try {
+            setIsGenerating(true);
+            setIsTimedOut(true);
+            console.log("Chat timeout started");
+            timeoutId = setTimeout(() => {
+              setIsTimedOut(false);
+              console.log("Chat timeout ended.");
+            }, 10000);
+            const completion = await openai.chat.completions.create({
+              messages: chat,
+              model: "gpt-3.5-turbo",
+            });
+            setResponse(completion.choices[0].message);
+            setIsGenerating(false);
+          } catch (err) {
+            setIsGenerating(false);
+            setError(`Chatbot Error: ${err.message}`);
+          }
         }
       }
-      if (chat[chat.length-1]?.role === "user" || chat.length) {
-        main();
+      if (chat.length > 0 && chat[chat.length - 1]?.role === "user") {
+        generateCompletion();
+      }
+      return () => {
+        if(timeoutId) {
+          clearTimeout(timeoutId);
+        }
       }
     },
-    [chat, setChat],
+    [chat],
   );
-  return [isGenerating, error];
+  return [response,setResponse, isGenerating, error];
 }
 
 export default useChatAI;

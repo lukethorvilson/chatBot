@@ -6,15 +6,32 @@ import useChatAI from "../hooks/useChatAI";
 function ChatBox() {
   const [chat, setChat] = useState([]);
   const [userInput, setUserInput] = useState("");
-  const [isGenerating, error] = useChatAI(chat, setChat);
+  const [response, setResponse, isGenerating, error] = useChatAI(chat, setChat);
+
   function handleSubmitUserInput(e) {
     e.preventDefault();
-    setChat((prev) => [...prev, { role: "user", content: userInput }]);
+    // if theres no response must be the first message of the chat so dont include an empty string
+    if (response) {
+      setChat((prev) => [
+        ...prev,
+        response,
+        { role: "user", content: userInput },
+      ]);
+      setResponse("")
+    } else {
+      setChat((prev) => [...prev, { role: "user", content: userInput }]);
+    }
+    
     setUserInput("");
   }
   return (
-    <div className="h-[90svh] w-full pl-5 pt-3 bg-gray-200">
-      <ChatBody chat={chat} />
+    <div className="h-[90svh] w-full bg-gray-200 pl-5 pt-3">
+      <ChatBody
+        chat={chat}
+        response={response}
+        isGenerating={isGenerating}
+        error={error}
+      />
       <Input
         userInput={userInput}
         setUserInput={setUserInput}
