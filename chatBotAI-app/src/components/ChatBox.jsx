@@ -25,7 +25,7 @@ function ChatBox() {
     setUserInput("");
   }
   return (
-    <div className="h-[90svh] w-full bg-gray-200 pl-5 pt-3">
+    <div className="h-[90svh] w-full bg-gray-200 pt-3">
       <ChatBody
         chat={chat}
         response={response}

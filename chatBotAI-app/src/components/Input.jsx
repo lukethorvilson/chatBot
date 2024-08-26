@@ -12,7 +12,7 @@ function Input({ userInput, setUserInput, handleSubmit }) {
   return (
     <>
       <form
-        className="absolute bottom-0 flex h-16 w-[100%] gap-2 bg-gray-200 pb-2 lg:justify-center"
+        className="absolute mx-auto my-auto bottom-0 flex h-20 w-[100%] gap-2 bg-gray-200 pb-4 px-4 lg:justify-center"
         onSubmit={(e) => handleSubmit(e)}
       >
         <input
@@ -23,7 +23,7 @@ function Input({ userInput, setUserInput, handleSubmit }) {
         ></input>
         <button
           type="submit"
-          className="h-[70%] w-[15%] rounded-3xl bg-green-500 text-white transition-colors hover:bg-green-600 md:w-[10%] lg:w-[100px]"
+          className="h-[80%] w-[20%] rounded-3xl bg-green-500 text-white transition-colors hover:bg-green-600 md:w-[10%] lg:w-[100px]"
         >
           Send
         </button>
